@@ -32,16 +32,51 @@ node solution.js name1 name2 name3
 ** give a look to node.js util.promisify, avoid to alter the validate-user.file **
 */
 
+const { error } = require("console");
+const validateUser = require("./validate-user");
+
 function solution() {
-    // YOUR SOLUTION GOES HERE
+  // YOUR SOLUTION GOES HERE
 
-    // you get your 5 names here
+  const successUser = [];
+  const failureUser = [];
 
-    // iterate the names array and validate them with the method
+  function printResults(successUser, failureUser) {
+    let total = successUser.length + failureUser.length;
+    console.log(`Success ${successUser.length}/${total}\n`);
+    successUser.forEach((u) => console.log(`id:${u.id}\nname:${u.name}`));
 
-    // log the final result
+    console.log();
+    console.log(`Failure ${failureUser.length}/${total}\n`);
+    failureUser.forEach((u) => console.log(u));
+  }
+
+  // you get your 5 names here
+  const sampleUsers = ["Ronald", "Mary", "Ris", "Stacy", "Ashley"]; //both
+  //   const sampleUsers = ["Mary", "Stacy"]; //all success
+  //   const sampleUsers = ["Ronald", "Ris", "Ashley"]; //all failure
+
+  // iterate the names array and validate them with the method
+  sampleUsers.forEach((name) =>
+    validateUser(name, (error, data) => {
+      if (error) {
+        failureUser.push(error.message);
+      } else {
+        successUser.push(data);
+      }
+    })
+  );
+
+  // log the final result
+  //    Success users have a 300ms delay when calculate them. So they move to the queue stack,
+  //    so I'LL PRINT SUCCESS user only after the setTimeout delay is done (if there ir a delay)
+  if (sampleUsers.length != failureUser.length) {
+    //So it's  send at the end of the task queue, without blocking main thread
+    setTimeout(() => printResults(successUser, failureUser), 300);
+  } else {
+    //no successful users, so no delay. I can log answers right away
+    printResults(successUser, failureUser);
+  }
 }
 
-solution()
-
-
+solution();
