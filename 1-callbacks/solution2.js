@@ -33,6 +33,7 @@ node solution.js name1 name2 name3
 */
 
 const { validateUser, printResults } = require("./validate-user");
+const util = require("util");
 
 function solution() {
   // YOUR SOLUTION GOES HERE
@@ -42,32 +43,28 @@ function solution() {
   // you get your 5 names here
   let sampleUsers = ["Ronald", "Mary", "Ris", "Stacy", "Ashley"];
 
-  //Reading from console
+  //Reading from console: node solution2.js Ronald Kai Jonh John Mary Richard Stacy
   if (process.argv.length > 2) {
     sampleUsers = process.argv.slice(2);
   }
 
-  // iterate the names array and validate them with the method
-  sampleUsers.forEach((name) =>
-    validateUser(name, (error, data) => {
-      if (error) {
-        failureUser.push(error.message);
-      } else {
-        successUser.push(data);
-      }
-    })
-  );
+  const validateUserAsync = util.promisify(validateUser);
 
-  // log the final result
-  //    Success users have a 300ms delay when calculate them. So they move to the queue stack,
-  //    I'LL PRINT SUCCESS user only after the setTimeout delay is done (if there ir a delay)
-  if (sampleUsers.length != failureUser.length) {
-    //So it's  send at the end of the task queue, without blocking main thread
-    setTimeout(() => printResults(successUser, failureUser), 300);
-  } else {
-    //no successful users, so no delay. I can log answers right away
-    printResults(successUser, failureUser);
-  }
+  // iterate the names array and validate them with the method
+  const promises = sampleUsers.map((name) => validateUserAsync(name));
+  Promise.allSettled(promises)
+    .then((results) => {
+      results.forEach((r) => {
+        if (r.status === "rejected") {
+          failureUser.push(r.reason.message);
+          return;
+        }
+        successUser.push(r.value);
+      });
+    })
+    .finally(() => {
+      printResults(successUser, failureUser);
+    });
 }
 
 solution();
