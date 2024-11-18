@@ -48,6 +48,8 @@ function solution() {
   }
   let count = sampleUsers.length;
 
+  if (count == 0) printResults([], []);
+
   // iterate the names array and validate them with the method
   sampleUsers.forEach((name) =>
     validateUser(name, (error, data) => {
