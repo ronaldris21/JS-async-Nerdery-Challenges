@@ -35,18 +35,18 @@ node solution.js name1 name2 name3
 const { validateUser, printResults } = require("./validate-user");
 const util = require("util");
 
-function solution() {
+/**
+ *
+ * @param {*} sampleUsers : string[] an array of names
+ * @param {*} cb : function(successUser, failureUser) - callback function
+ *      successUser: [{id:1, name:"John"},{id:2, name:"Mary"}]
+ *      failureUser: string[] like ["User Benjamin not allowed", "User Ronald not allowed"]
+ */
+
+function solution(sampleUsers, cb) {
   // YOUR SOLUTION GOES HERE
   const successUser = [];
   const failureUser = [];
-
-  // you get your 5 names here
-  let sampleUsers = ["Ronald", "Mary", "Ris", "Stacy", "Ashley"];
-
-  //Reading from console: node solution2.js Ronald Kai Jonh John Mary Richard Stacy
-  if (process.argv.length > 2) {
-    sampleUsers = process.argv.slice(2);
-  }
 
   const validateUserAsync = util.promisify(validateUser);
 
@@ -63,8 +63,9 @@ function solution() {
       });
     })
     .finally(() => {
-      printResults(successUser, failureUser);
+      // printResults(successUser, failureUser);
+      cb(successUser, failureUser);
     });
 }
 
-solution();
+module.exports = solution;

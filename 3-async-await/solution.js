@@ -23,7 +23,15 @@ Example:
 const pricesAsync = require("./prices");
 const productsAsync = require("./products");
 
-async function solution() {
+/**
+ * 
+ * @param {*} id positive number
+ * @returns returns either:
+ *                    - a string with the error message or 
+ *                    - an object as follow: { id: 1, price: 0.5, product: "salt" }
+ */
+
+async function solution(id) {
   // YOUR SOLUTION GOES HERE
   const promiseAllSolution = async (id) => {
     try {
@@ -110,7 +118,7 @@ async function solution() {
   };
 
   // You generate your id value here
-  const id = parseInt(Date.now().toString().slice(-2));
+  // const id = parseInt(Date.now().toString().slice(-2));
   const [
     productDataFromPromiseAll,
     productDataFromPromiseAllSettled,
@@ -124,17 +132,17 @@ async function solution() {
   ]);
 
   // Log the results, or errors, here
-  console.log(`\nid: ${id} `);
-  console.log(`Promise.all`);
-  console.log(productDataFromPromiseAll);
-  console.log(`Promise.allSettled`);
-  console.log(productDataFromPromiseAllSettled);
-  console.log(`Promise.race`);
-  console.log(productDataFromPromiseRace);
-  console.log(`Promise.any`);
-  console.log(productDataFromPromiseAny);
-}
+  // console.log(`\nid: ${id} `);
+  // console.log(`Promise.all`);
+  // console.log(productDataFromPromiseAll);
+  // console.log(`Promise.allSettled`);
+  // console.log(productDataFromPromiseAllSettled);
+  // console.log(`Promise.race`);
+  // console.log(productDataFromPromiseRace);
+  // console.log(`Promise.any`);
+  // console.log(productDataFromPromiseAny);
 
-solution();
-setTimeout(() => solution(), 100);
-setTimeout(() => solution(), 200);
+
+  return productDataFromPromiseAll;
+}
+module.exports = solution;

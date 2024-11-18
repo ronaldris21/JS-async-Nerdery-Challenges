@@ -33,19 +33,18 @@ node solution.js name1 name2 name3
 */
 
 const { validateUser, printResults } = require("./validate-user");
+/**
+ *
+ * @param {*} sampleUsers : string[] an array of names
+ * @param {*} cb : function(successUser, failureUser) - callback function
+ *      successUser: [{id:1, name:"John"},{id:2, name:"Mary"}]
+ *      failureUser: string[] like ["User Benjamin not allowed", "User Ronald not allowed"]
+ */
 
-function solution() {
+function solution(sampleUsers, cb) {
   // YOUR SOLUTION GOES HERE
   const successUser = [];
   const failureUser = [];
-
-  // you get your 5 names here
-  let sampleUsers = ["Ronald", "Mary", "Ris", "Stacy", "Ashley"];
-
-  //Reading from console
-  if (process.argv.length > 2) {
-    sampleUsers = process.argv.slice(2);
-  }
 
   // iterate the names array and validate them with the method
   sampleUsers.forEach((name) =>
@@ -58,16 +57,13 @@ function solution() {
     })
   );
 
-  // log the final result
-  //    Success users have a 300ms delay when calculate them. So they move to the queue stack,
-  //    I'LL PRINT SUCCESS user only after the setTimeout delay is done (if there ir a delay)
   if (sampleUsers.length != failureUser.length) {
-    //So it's  send at the end of the task queue, without blocking main thread
-    setTimeout(() => printResults(successUser, failureUser), 300);
+    setTimeout(() => {
+      cb(successUser, failureUser);
+    }, 300);
   } else {
-    //no successful users, so no delay. I can log answers right away
-    printResults(successUser, failureUser);
+    cb(successUser, failureUser);
   }
 }
 
-solution();
+module.exports = solution;
