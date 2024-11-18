@@ -26,7 +26,6 @@ This repo provides a series of exercises to put your js async understanding into
 ```console
  node 1-callbacks/solution.js 
  node 1-callbacks/solution2.js Ronald Ris Mary Stacy Ashley 
- node 2-promises/solution.js && node 3-async-await/solution.js 
 ```
 
 2. Promises:
