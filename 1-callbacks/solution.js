@@ -46,6 +46,7 @@ function solution() {
   if (process.argv.length > 2) {
     sampleUsers = process.argv.slice(2);
   }
+  let count = sampleUsers.length;
 
   // iterate the names array and validate them with the method
   sampleUsers.forEach((name) =>
@@ -55,19 +56,10 @@ function solution() {
       } else {
         successUser.push(data);
       }
+      count--;
+      if (count === 0) printResults(successUser, failureUser);
     })
   );
-
-  // log the final result
-  //    Success users have a 300ms delay when calculate them. So they move to the queue stack,
-  //    I'LL PRINT SUCCESS user only after the setTimeout delay is done (if there ir a delay)
-  if (sampleUsers.length != failureUser.length) {
-    //So it's  send at the end of the task queue, without blocking main thread
-    setTimeout(() => printResults(successUser, failureUser), 300);
-  } else {
-    //no successful users, so no delay. I can log answers right away
-    printResults(successUser, failureUser);
-  }
 }
 
 solution();
