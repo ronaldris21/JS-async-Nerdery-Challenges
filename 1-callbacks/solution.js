@@ -43,9 +43,13 @@ const { validateUser, printResults } = require("./validate-user");
 
 function solution(sampleUsers, cb) {
   // YOUR SOLUTION GOES HERE
+
+  if (sampleUsers.length == 0) cb([], []);
+
   const successUser = [];
   const failureUser = [];
 
+  let count = sampleUsers.length;
   // iterate the names array and validate them with the method
   sampleUsers.forEach((name) =>
     validateUser(name, (error, data) => {
@@ -54,16 +58,10 @@ function solution(sampleUsers, cb) {
       } else {
         successUser.push(data);
       }
+      count--;
+      if (count === 0) cb(successUser, failureUser);
     })
   );
-
-  if (sampleUsers.length != failureUser.length) {
-    setTimeout(() => {
-      cb(successUser, failureUser);
-    }, 300);
-  } else {
-    cb(successUser, failureUser);
-  }
 }
 
 module.exports = solution;
