@@ -72,16 +72,13 @@ const promiseAllSettledSolution = async (id) => {
 const promiseRaceSolution = async (id) => {
   try {
     //promise race get first to be done (either resolve or rejected)
-    let productResult = await Promise.race([
-      productsAsync(id),
-      productsAsync(id),
-    ]);
-    let priceResult = await Promise.race([pricesAsync(id), pricesAsync(id)]);
+    let product = await Promise.race([productsAsync(id), productsAsync(id)]);
+    let price = await Promise.race([pricesAsync(id), pricesAsync(id)]);
 
     return {
       id,
-      price: priceResult,
-      product: productResult,
+      price,
+      product,
     };
   } catch (error) {
     return "Error: " + error.message;
@@ -91,16 +88,13 @@ const promiseRaceSolution = async (id) => {
 const promiseAnySolution = async (id) => {
   try {
     //promise any get first to be done successfully resolved!
-    let productResult = await Promise.any([
-      productsAsync(id),
-      productsAsync(id),
-    ]);
-    let priceResult = await Promise.any([pricesAsync(id), pricesAsync(id)]);
+    let product = await Promise.any([productsAsync(id), productsAsync(id)]);
+    let price = await Promise.any([pricesAsync(id), pricesAsync(id)]);
 
     return {
       id,
-      price: priceResult,
-      product: productResult,
+      price,
+      product,
     };
   } catch (error) {
     //Handle internal errors
@@ -111,7 +105,6 @@ const promiseAnySolution = async (id) => {
     return "Error: " + error.message + additionalDetails;
   }
 };
-
 
 module.exports = {
   promiseAllSolution,
