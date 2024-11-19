@@ -19,23 +19,24 @@ This repo provides a series of exercises to put your js async understanding into
 1. basic understanding of JS and Node.js
 2. Node.js 16, or later
 
-## Run solutions
-
-1. Callbacks:
-
-```console
- node 1-callbacks/solution.js 
- node 1-callbacks/solution2.js Ronald Ris Mary Stacy Ashley 
-```
-
-2. Promises:
+## Run test
+You can run all the test using the following command:
 
 ```console
- node 2-promises/solution.js
+npm run test 
 ```
 
-3. Asyn-await:
+Or you can run only a specific test suite using its name:
 
 ```console
- node 3-async-await/solution.js 
+npm run test asyncAwait.any
+npm run test promises 
 ```
+
+Or a group of test:
+
+```console
+npm run test asyncAwait
+```
+
+Or any variation of above
