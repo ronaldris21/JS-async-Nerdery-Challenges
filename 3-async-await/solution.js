@@ -24,125 +24,98 @@ const pricesAsync = require("./prices");
 const productsAsync = require("./products");
 
 /**
- * 
+ *
  * @param {*} id positive number
  * @returns returns either:
- *                    - a string with the error message or 
+ *                    - a string with the error message or
  *                    - an object as follow: { id: 1, price: 0.5, product: "salt" }
  */
 
-async function solution(id) {
-  // YOUR SOLUTION GOES HERE
-  const promiseAllSolution = async (id) => {
-    try {
-      let resultsAll = await Promise.all([pricesAsync(id), productsAsync(id)]);
-      return {
-        id,
-        price: resultsAll[0],
-        product: resultsAll[1],
-      };
-    } catch (error) {
-      return "Error: " + error.message;
-    }
-  };
-
-  const promiseAllSettledSolution = async (id) => {
-    const resultsAllSettled = await Promise.allSettled([
+const promiseAllSolution = async (id) => {
+  try {
+    let [price, product] = await Promise.all([
       pricesAsync(id),
       productsAsync(id),
     ]);
+    return {
+      id,
+      price,
+      product,
+    };
+  } catch (error) {
+    return "Error: " + error.message;
+  }
+};
 
-    let errorReasons = resultsAllSettled.reduce(
-      (errorMessage, result) =>
-        errorMessage + (result.reason ? result.reason + " " : ""),
-      ""
-    );
+const promiseAllSettledSolution = async (id) => {
+  const [price, product] = await Promise.allSettled([
+    pricesAsync(id),
+    productsAsync(id),
+  ]);
 
-    if (errorReasons) {
-      return errorReasons;
-    }
+  //if no reason -> undefine on .reason property
+  let errorReasons = price.reason ?? "";
+  errorReasons += errorReasons ? " " : ""; //separation space
+  errorReasons += product.reason ?? "";
+
+  if (errorReasons) {
+    return errorReasons;
+  }
+
+  return {
+    id,
+    price: price.value,
+    product: product.value,
+  };
+};
+
+const promiseRaceSolution = async (id) => {
+  try {
+    //promise race get first to be done (either resolve or rejected)
+    let productResult = await Promise.race([
+      productsAsync(id),
+      productsAsync(id),
+    ]);
+    let priceResult = await Promise.race([pricesAsync(id), pricesAsync(id)]);
 
     return {
       id,
-      price: resultsAllSettled[0].value,
-      product: resultsAllSettled[1].value,
+      price: priceResult,
+      product: productResult,
     };
-  };
+  } catch (error) {
+    return "Error: " + error.message;
+  }
+};
 
-  const promiseRaceSolution = async (id) => {
-    try {
-      //promise race get first to be done (either resolve or rejected)
-      let productResult = await Promise.race([
-        productsAsync(id),
-        productsAsync(id),
-        productsAsync(id),
-      ]);
-      let priceResult = await Promise.race([
-        pricesAsync(id),
-        pricesAsync(id),
-        pricesAsync(id),
-      ]);
+const promiseAnySolution = async (id) => {
+  try {
+    //promise any get first to be done successfully resolved!
+    let productResult = await Promise.any([
+      productsAsync(id),
+      productsAsync(id),
+    ]);
+    let priceResult = await Promise.any([pricesAsync(id), pricesAsync(id)]);
 
-      return {
-        id,
-        price: priceResult,
-        product: productResult,
-      };
-    } catch (error) {
-      return "Error: " + error.message;
+    return {
+      id,
+      price: priceResult,
+      product: productResult,
+    };
+  } catch (error) {
+    //Handle internal errors
+    let additionalDetails = error?.errors?.map((e) => e.message).join(" | ");
+    if (additionalDetails) {
+      return "Error: " + error.message + " - DETAILS: " + additionalDetails;
     }
-  };
-
-  const promiseAnySolution = async (id) => {
-    try {
-      //promise any get first to be done successfully resolved!
-      let productResult = await Promise.any([
-        productsAsync(id),
-        productsAsync(id),
-        productsAsync(id),
-      ]);
-      let priceResult = await Promise.any([
-        pricesAsync(id),
-        pricesAsync(id),
-        pricesAsync(id),
-      ]);
-
-      return {
-        id,
-        price: priceResult,
-        product: productResult,
-      };
-    } catch (error) {
-      return "Error: " + error.message;
-    }
-  };
-
-  // You generate your id value here
-  // const id = parseInt(Date.now().toString().slice(-2));
-  const [
-    productDataFromPromiseAll,
-    productDataFromPromiseAllSettled,
-    productDataFromPromiseRace,
-    productDataFromPromiseAny,
-  ] = await Promise.all([
-    promiseAllSolution(id),
-    promiseAllSettledSolution(id),
-    promiseRaceSolution(id),
-    promiseAnySolution(id),
-  ]);
-
-  // Log the results, or errors, here
-  // console.log(`\nid: ${id} `);
-  // console.log(`Promise.all`);
-  // console.log(productDataFromPromiseAll);
-  // console.log(`Promise.allSettled`);
-  // console.log(productDataFromPromiseAllSettled);
-  // console.log(`Promise.race`);
-  // console.log(productDataFromPromiseRace);
-  // console.log(`Promise.any`);
-  // console.log(productDataFromPromiseAny);
+    return "Error: " + error.message + additionalDetails;
+  }
+};
 
 
-  return productDataFromPromiseAll;
-}
-module.exports = solution;
+module.exports = {
+  promiseAllSolution,
+  promiseAllSettledSolution,
+  promiseRaceSolution,
+  promiseAnySolution,
+};
